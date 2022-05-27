@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Alert } from 'react-native';
 
@@ -13,14 +13,28 @@ export default function App() {
   const [d, setD] = useState('');
   const [d1, setD1] = useState('');
   const [d2, setD2] = useState('');
-  // const [d2, setD3] = useState('');
+  const [d3, setD3] = useState('');
   const [e, setE] = useState('');
   const [f, setF] = useState('');
   const [g, setG] = useState('');
 
+  React.useEffect(() => {
+    valorD3()
+  }, [d3]);
+
   async function handleSubmit() {
-    let d3 = d2 / 2;
-    var p = formula(parseFloat(x), parseFloat(a), parseFloat(b), parseFloat(c), parseFloat(d), parseFloat(d1), parseFloat(d2), parseFloat(d3), parseFloat(e), parseFloat(f), parseFloat(g));
+    let p = formula(
+      parseFloat(x),
+      parseFloat(a),
+      parseFloat(b),
+      parseFloat(c),
+      parseFloat(d),
+      parseFloat(d1),
+      parseFloat(d2),
+      parseFloat(d3),
+      parseFloat(e),
+      parseFloat(f),
+      parseFloat(g));
     // console.log(p)
     Alert.alert('Resultado do calculo', `${p}`, [
       {
@@ -32,6 +46,10 @@ export default function App() {
         // onPress: () => console.log('OK Pressed') 
       },
     ]);
+  }
+  async function valorD3() {
+    let resp = d2 / 2;
+    setD3(resp);
   }
 
   function formula(x, a, b, c, d, d1, d2, d3, e, f, g){
@@ -125,7 +143,10 @@ export default function App() {
         autoCorrect={false}
         value={d2}
         onChangeText={setD2}
+        onBlur={valorD3}
         />
+        <Text style={styles.label} >Manutenção do Veículo (50% de D2) (Valor de D3):</Text>
+        <Text style={styles.input}> {d3} </Text>
         <Text style={styles.label} >Quantidade de Viagens necessárias para a vistoria (Valor de E):</Text>
         <TextInput 
         style={styles.input}
@@ -206,7 +227,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     width: 305, 
     height: 100,
-    marginLeft: 50
+    marginLeft: 40
   },
   button: {
     height: 42,
