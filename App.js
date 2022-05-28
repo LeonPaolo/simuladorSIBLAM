@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Alert } from 'react-native';
-
+import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, Alert, Linking } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import logo from './assets/tuxtu.png';
 import {Button} from 'react-native-web';
 
@@ -183,13 +184,44 @@ export default function App() {
         <TouchableOpacity onPress={handleSubmit} style={styles.button}> 
           <Text style={styles.buttonText} >Calcular </Text>        
         </TouchableOpacity>
+      <Text
+          style={styles.whatsapp}
+          onPress={() => {
+            Linking.openURL(
+              'http://api.whatsapp.com/send?phone=5596991953535'
+            );
+          }}>
+          <FontAwesome name="whatsapp" size={24} color="green" />Dúvidas e Sugestões
+        </Text>
+        <Text
+          style={styles.email}
+          onPress={() => {
+            Linking.openURL(
+              'mailto:contato@tuxtu.com.br'
+            );
+          }}>
+          <Entypo name="email" size={18} color="blue" />contato@tuxtu.com.br
+        </Text>
       </View>
+
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  whatsapp: {
+    marginLeft: 65,
+    marginBottom: 2,
+    fontSize: 22,
+    color: 'green'
+  },
+  email: {
+    marginLeft: 80,
+    marginBottom: 50,
+    fontSize: 18,
+    color: 'blue'
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -234,8 +266,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#22bb33',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 2,
-    marginBottom: 100
+    borderRadius: 10,
+    marginBottom: 30
   },
   buttonText: {
     color: '#FFF',
