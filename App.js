@@ -400,4 +400,3 @@ const stylesModal = StyleSheet.create({
     borderRadius: 2,
   },
 });
-// centeredView modalView modalText button buttonClose textStyle
