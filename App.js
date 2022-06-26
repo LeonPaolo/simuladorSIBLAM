@@ -1,55 +1,67 @@
 import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, Alert, Linking } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, ScrollView, Alert, Linking, Modal, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import logo from './assets/tuxtu.png';
-import {Button} from 'react-native-web';
+import { TextInputMask } from 'react-native-masked-text'
 
 export default function App() {
-  const [x, setX] = useState('');
-  const [a, setA] = useState('');
-  const [b, setB] = useState('');
-  const [c, setC] = useState('');
-  const [d, setD] = useState('');
-  const [d1, setD1] = useState('');
-  const [d2, setD2] = useState('');
-  const [d3, setD3] = useState('');
-  const [e, setE] = useState('');
-  const [f, setF] = useState('');
-  const [g, setG] = useState('');
+  const [x, setX] = useState('R$: 0,00');
+  const [a, setA] = useState('1');
+  const [b, setB] = useState('1');
+  const [c, setC] = useState('R$: 0,00');
+  const [d, setD] = useState('R$: 0,00');
+  const [d1, setD1] = useState('1');
+  const [d2, setD2] = useState('R$: 0,00');
+  const [d3, setD3] = useState('R$: 0,00');
+  const [e, setE] = useState('1');
+  const [f, setF] = useState('R$: 0,00');
+  const [g, setG] = useState('R$: 0,00');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [resultado, setResultado] = useState('0,00');
 
   React.useEffect(() => {
     valorD3()
   }, [d3]);
-
+   function realParaNumber(texto){
+    var compativelComParseFloat = texto.replace("R$: ","");
+    compativelComParseFloat = compativelComParseFloat.replace(".","");
+    compativelComParseFloat = compativelComParseFloat.replace(",",".");
+    var valor = parseFloat(compativelComParseFloat);
+    return valor;
+}
   async function handleSubmit() {
     let p = formula(
-      parseFloat(x),
+      realParaNumber(x),
       parseFloat(a),
       parseFloat(b),
-      parseFloat(c),
-      parseFloat(d),
-      parseFloat(d1),
-      parseFloat(d2),
+      realParaNumber(c),
+      realParaNumber(d),
+      realParaNumber(d1),
+      realParaNumber(d2),
       parseFloat(d3),
       parseFloat(e),
-      parseFloat(f),
-      parseFloat(g));
-    // console.log(p)
-    Alert.alert('Resultado do calculo', `${p}`, [
-      {
-        // text: 'Cancelar',
-        // onPress: () => console.log('Cancel Pressed'),
-        // style: 'cancel',
-      },
-      { text: 'OK', 
-        // onPress: () => console.log('OK Pressed') 
-      },
-    ]);
+      realParaNumber(f),
+      realParaNumber(g)
+      );
+      
+      setResultado(p)
+      setModalVisible(true)
+    // Alert.alert('Resultado do calculo', `${p}`, [
+    //   {
+    //     // text: 'Cancelar',
+    //     // onPress: () => console.log('Cancel Pressed'),
+    //     // style: 'cancel',
+    //   },
+    //   { text: 'OK', 
+    //     // onPress: () => console.log('OK Pressed') 
+    //   },
+    // ]);
   }
   async function valorD3() {
-    let resp = d2 / 2;
+    let value = realParaNumber(d2)
+    let resp = (value / 2);
     setD3(resp);
   }
 
@@ -69,118 +81,142 @@ export default function App() {
       <View style={styles.form}>
         <Text style={styles.titulo}>Simulador de Taxa</Text>
         <Text style={styles.label} >Valor de X:</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Valor de X"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={x}
-        onChangeText={setX}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={x}
+            onChangeText={setX}
+          />
         <Text style={styles.label} >Quantidade de Técnicos envolvidos na análise (Valor de A):</Text>
         <TextInput 
         style={styles.input}
-        placeholder="Quantidade de Técnicos envolvidos na análise (Valor de A)"
-        placeholderTextColor="#999"
         keyboardType="numeric"
         autoCapitalize="none"
         autoCorrect={false}
-        value={a}
-        onChangeText={setA}
-        />
+        value={a.replace(/[^0-9]/g, '')}
+        onChangeText={setA}        
+        />        
         <Text style={styles.label} >Quantidade de Horas/Técnica necessárias para análise (Valor de B):</Text>
         <TextInput 
         style={styles.input}
-        placeholder="Quantidade de Horas/Técnica necessárias para análise (Valor de B)"
-        placeholderTextColor="#999"
         keyboardType="numeric"
         autoCapitalize="none"
         autoCorrect={false}
-        value={b}
+        value={b.replace(/[^0-9]/g, '')}
         onChangeText={setB}
         />
         <Text style={styles.label} >Valor em UFIR da Hora/Técnico para análise fixado em 50 UFIR (Valor de C):</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Valor em UFIR da Hora/Técnico para análise fixado em 50 UFIR (Valor de C)"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={c}
-        onChangeText={setC}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={c}
+            onChangeText={setC}
+          />
         <Text style={styles.label} >Valor da diária (Valor de D):</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Valor da diária (Valor de D)"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={d}
-        onChangeText={setD}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={d}
+            onChangeText={setD}
+          />
         <Text style={styles.label} >Total de Diárias (Valor de D1):</Text>
         <TextInput 
         style={styles.input}
-        placeholder="Total de Diárias (Valor de D1)"
-        placeholderTextColor="#999"
         keyboardType="numeric"
         autoCapitalize="none"
         autoCorrect={false}
-        value={d1}
+        value={d1.replace(/[^0-9]/g, '')}
         onChangeText={setD1}
         />
         <Text style={styles.label} >Valor do combustível usado na vistoria (Valor de D2):</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Valor do combustível usado na vistoria (Valor de D2)"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={d2}
-        onChangeText={setD2}
-        onBlur={valorD3}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={d2}
+            onChangeText={setD2}
+            onBlur={valorD3}
+          />
         <Text style={styles.label} >Manutenção do Veículo (50% de D2) (Valor de D3):</Text>
-        <Text style={styles.input}> {d3} </Text>
+        {/* <Text style={styles.input}> {d3} </Text> */}
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={d3}
+            // onChangeText={setF}
+            editable = {false}
+          />
         <Text style={styles.label} >Quantidade de Viagens necessárias para a vistoria (Valor de E):</Text>
         <TextInput 
         style={styles.input}
-        placeholder="Quantidade de Viagens necessárias para a vistoria (Valor de E)"
-        placeholderTextColor="#999"
         keyboardType="numeric"
         autoCapitalize="none"
         autoCorrect={false}
-        value={e}
+        value={e.replace(/[^0-9]/g, '')}
         onChangeText={setE}
         />
         <Text style={styles.label} >Taxa de Requerimento de Publicação (Valor de F):</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Taxa de Requerimento de Publicação (Valor de F)"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={f}
-        onChangeText={setF}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={f}
+            onChangeText={setF}
+          />
         <Text style={styles.label} >Taxa de Recebimento de Publicação (Valor de G):</Text>
-        <TextInput 
-        style={styles.input}
-        placeholder="Taxa de Recebimento de Publicação (Valor de G)"
-        placeholderTextColor="#999"
-        keyboardType="numeric"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={g}
-        onChangeText={setG}
-        />
+        <TextInputMask
+          style={styles.input}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }}
+            value={g}
+            onChangeText={setG}
+          />
         <TouchableOpacity onPress={handleSubmit} style={styles.button}> 
           <Text style={styles.buttonText} >Calcular </Text>        
         </TouchableOpacity>
@@ -203,7 +239,39 @@ export default function App() {
           <Entypo name="email" size={18} color="blue" />contato@tuxtu.com.br
         </Text>
       </View>
-
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={stylesModal.centeredView}>
+          <View style={stylesModal.modalView}>
+            {/* <Text style={stylesModal.modalText}>{resultado}</Text> */}
+            <TextInputMask
+            style={stylesModal.modalText}
+            type={'money'}
+            options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$: ',
+              suffixUnit: ''
+            }} 
+            editable = {false}
+            value={resultado}
+            />
+            <Pressable
+              style={[stylesModal.button, stylesModal.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={stylesModal.textStyle}>Fechar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+          
       </ScrollView>
     </View>
   );
@@ -280,3 +348,56 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
   }
 });
+const stylesModal = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    // marginBottom: 15,
+    // textAlign: 'center',
+    
+    borderWidth: 0,
+    borderColor: '#ddd',
+    paddingHorizontal: 0,
+    fontSize: 16,
+    color: '#444',
+    height: 35,
+    marginBottom: 20,
+    borderRadius: 2,
+  },
+});
+// centeredView modalView modalText button buttonClose textStyle
